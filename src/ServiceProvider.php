@@ -4,6 +4,7 @@ namespace Alfa6661\EloquentHasManySync;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Illuminate\Support\Arr;
 
 class ServiceProvider extends BaseServiceProvider
 {
