@@ -15,7 +15,7 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
-        HasMany::macro('sync', function (array $data, $deleting = true) {
+        HasMany::macro('sync', function (array $data, $relatedKeyName = null, $deleting = true) {
             $changes = [
                 'created' => [], 'deleted' => [], 'updated' => [],
             ];
@@ -23,7 +23,7 @@ class ServiceProvider extends BaseServiceProvider
             /** @var HasMany $this */
 
             // Get the primary key.
-            $relatedKeyName = $this->getRelated()->getKeyName();
+            $relatedKeyName = $relatedKeyName ?? $this->getRelated()->getKeyName();
 
             // Get the current key values.
             $current = $this->newQuery()->pluck($relatedKeyName)->all();
