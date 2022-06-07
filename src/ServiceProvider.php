@@ -55,14 +55,14 @@ class ServiceProvider extends BaseServiceProvider
             }
 
             // Separate the submitted data into "update" and "new"
-            // We determine "newRows" as those whose $relatedKeyName (usually 'id') is null.
-            $newRows = Arr::where($data, function ($row) use ($relatedKeyName) {
-                return Arr::get($row, $relatedKeyName) === null;
+            // We determine "newRows" as those whose $relatedKeyName is NOT in $current
+            $newRows = Arr::where($data, function ($row) use ($current, $relatedKeyName) {
+                return ! in_array(Arr::get($row, $relatedKeyName), $current);
             });
 
-            // We determine "updateRows" as those whose $relatedKeyName (usually 'id') is set, not null.
-            $updatedRows = Arr::where($data, function ($row) use ($relatedKeyName) {
-                return Arr::get($row, $relatedKeyName) !== null;
+            // We determine "updateRows" as those whose $relatedKeyName is already in $current
+            $updatedRows = Arr::where($data, function ($row) use ($current, $relatedKeyName) {
+                return in_array(Arr::get($row, $relatedKeyName), $current);
             });
 
             if (count($newRows) > 0) {
