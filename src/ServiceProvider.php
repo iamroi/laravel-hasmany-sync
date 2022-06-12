@@ -50,7 +50,10 @@ class ServiceProvider extends BaseServiceProvider
             );
 
             if ($deleting && count($deletedKeys) > 0) {
-                $this->getRelated()->destroy($deletedKeys);
+                $this->getRelated()
+                    ->whereIn($relatedKeyName, $deletedKeys)
+                    ->delete();
+
                 $changes['deleted'] = $deletedKeys;
             }
 
