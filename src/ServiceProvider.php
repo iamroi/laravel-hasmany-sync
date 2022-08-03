@@ -22,7 +22,7 @@ class ServiceProvider extends BaseServiceProvider
 
             /** @var HasMany $this */
 
-            // Get the primary key.
+            // Get the relation's matching key.
             $relatedKeyName = $relatedKeyName ?? $this->getRelated()->getKeyName();
 
             // Get the current key values.
@@ -51,6 +51,7 @@ class ServiceProvider extends BaseServiceProvider
 
             if ($deleting && count($deletedKeys) > 0) {
                 $this->getRelated()
+                    ->where($this->getForeignKeyName(), $this->getParentKey())
                     ->whereIn($relatedKeyName, $deletedKeys)
                     ->delete();
 
@@ -75,8 +76,11 @@ class ServiceProvider extends BaseServiceProvider
                 );
             }
 
+            dd($updatedRows);
+
             foreach ($updatedRows as $row) {
                 $related = $this->getRelated()
+                    ->where($this->getForeignKeyName(), $this->getParentKey())
                     ->where($relatedKeyName, $castKey(Arr::get($row, $relatedKeyName)))
                     ->first()
                     ->fill($row)
