@@ -76,8 +76,6 @@ class ServiceProvider extends BaseServiceProvider
                 );
             }
 
-            dd($updatedRows);
-
             foreach ($updatedRows as $row) {
                 $related = $this->getRelated()
                     ->where($this->getForeignKeyName(), $this->getParentKey())
