@@ -15,7 +15,7 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
-        HasMany::macro('sync', function (array $data, $relatedKeyName = null, $deleting = true) {
+        HasMany::macro('sync', function (array $data, $relatedKeyName = null, $deleting = true, $supportDeleteEvents = true) {
             $changes = [
                 'created' => [], 'deleted' => [], 'updated' => [],
             ];
@@ -50,10 +50,19 @@ class ServiceProvider extends BaseServiceProvider
             );
 
             if ($deleting && count($deletedKeys) > 0) {
-                $this->getRelated()
+                $deletingQuery = $this->getRelated()
                     ->where($this->getForeignKeyName(), $this->getParentKey())
-                    ->whereIn($relatedKeyName, $deletedKeys)
-                    ->delete();
+                    ->whereIn($relatedKeyName, $deletedKeys);
+
+                if($supportDeleteEvents) {
+                    $deletingRecords = $deletingQuery->get();
+
+                    foreach ($deletingRecords as $deletingRecord) {
+                        $deletingRecord->delete();
+                    }
+                } else {
+                    $deletingQuery->delete();
+                }
 
                 $changes['deleted'] = $deletedKeys;
             }
